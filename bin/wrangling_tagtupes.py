@@ -10,7 +10,7 @@ import pprint
 import re
 
 
-
+# Regular expressions to handle the common data format
 lower = re.compile(r'^([a-z]|_)*$')
 lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
 problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')

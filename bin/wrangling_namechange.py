@@ -10,43 +10,26 @@ import pprint
 
 OSMFILE = "c:\Vijay\DS\DW\omaha_nebraska.osm"
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
-
+# expected variable from the file to be handled by the code
 expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", 
-            "Trail", "Parkway", "Commons"]
+            "Trail", "Parkway", "Commons",'Broadway','Circle','Plaza']
 
 # UPDATE THIS VARIABLE
 mapping = { "St": "Street",
             "St.": "Street",
             "Ave": "Avenue",
             "Rd.": "Road",
-            '106': '106',
-            '330': '330',
-            '370': '370',
-            'A': 'A',
             'Ave': 'Avenue',
             'Blvd': 'Blvd',
-            'Broadway': 'BroadWay',
-            'Circle': 'circle',
             'Dr': 'Drive',
-            'Hascall': 'Hascall',
-            'Highway': 'Highway',
-            'Maple': 'Maple',
-            'North': 'North',
-            'Plaza': 'Plaza',             
-            'Q': 'Q',
             'Rd': 'Road',
             'STREET': 'Street',
-            'South': 'South',
-            'St': 'Street',
-            'St.': 'Street',
-            'Way': 'Way',
-            'bing': 'bing'
-           
+            
             }
 
 
 # In[30]:
-
+#function to handle different street types
 def audit_street_type(street_types, street_name):
     m = street_type_re.search(street_name)
     if m:
@@ -54,17 +37,17 @@ def audit_street_type(street_types, street_name):
         if street_type not in expected:
             street_types[street_type].add(street_name)
 
-
+# function to select only the street tags
 def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
 
-
+#function to parse the audit the data
 def audit(osmfile):
     osm_file = open(osmfile, "r")
     street_types = defaultdict(set)
     for event, elem in ET.iterparse(osm_file, events=("start",)):
 
-        if elem.tag == "node" or elem.tag == "way":
+        if elem.tag == "way":
             for tag in elem.iter("tag"):
                 if is_street_name(tag):
                     audit_street_type(street_types, tag.attrib['v'])
@@ -72,8 +55,8 @@ def audit(osmfile):
     return street_types
 
 
-# In[39]:
 
+#function to update the names
 def update_name(name, mapping):
     m = street_type_re.search(name)
     better_name = name
@@ -82,11 +65,8 @@ def update_name(name, mapping):
         better_name = street_type_re.sub(better_street_type, name)
 
     return better_name
-    # YOUR CODE HERE
 
-    #return name
-
-
+#driver function for the code
 def test():
     st_types = audit(OSMFILE)
     #assert len(st_types) == 3
@@ -105,13 +85,13 @@ def test():
             #    assert better_name == "Baldwin Road"
 
 
-# In[40]:
+
 
 if __name__ == '__main__':
     test()
 
 
-# In[ ]:
+
 
 
 
